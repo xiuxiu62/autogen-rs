@@ -1,0 +1,9 @@
+[[openai]]
+name = "a"
+model = "gpt-3.5"
+api_key = "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"
+
+[[openai]]
+name = "b"
+model = "gpt-3.5-turbo"
+api_key = "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"

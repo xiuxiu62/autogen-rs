@@ -1,0 +1,10 @@
+[package]
+name = "autogen-rs"
+version = "0.1.0"
+edition = "2021"
+
+[workspace]
+members = [
+  "autogen-client",
+  "autogen-core",
+]
