@@ -8,3 +8,7 @@ members = [
   "autogen-client",
   "autogen-core",
 ]
+
+[[example]]
+name = "chess"
+path = "examples/chess.rs"
