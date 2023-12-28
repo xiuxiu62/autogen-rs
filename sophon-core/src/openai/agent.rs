@@ -1,3 +1,8 @@
+use crate::agent::{
+    message::{Message, MessagePublisher},
+    Backend,
+};
+
 use super::{
     config::OpenaiConfig,
     error::{OpenaiError, OpenaiResult},
@@ -5,12 +10,12 @@ use super::{
 use chatgpt::prelude::ChatGPT;
 
 #[derive(Debug)]
-pub struct OpenaiAgent {
+pub struct OpenaiBackend {
     name: String,
     inner: ChatGPT,
 }
 
-impl TryFrom<OpenaiConfig> for OpenaiAgent {
+impl TryFrom<OpenaiConfig> for OpenaiBackend {
     type Error = OpenaiError;
 
     fn try_from(value: OpenaiConfig) -> OpenaiResult<Self> {
@@ -18,5 +23,15 @@ impl TryFrom<OpenaiConfig> for OpenaiAgent {
         let name = value.name;
 
         Ok(Self { name, inner })
+    }
+}
+
+impl<'backend> Backend<'backend> for OpenaiBackend {
+    fn query(
+        &'backend self,
+        message: Message<'backend>,
+        publisher: std::sync::Arc<MessagePublisher<'backend>>,
+    ) {
+        todo!()
     }
 }

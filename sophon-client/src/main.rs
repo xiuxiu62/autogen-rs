@@ -1,7 +1,4 @@
-mod config;
-mod openai;
-
-use crate::config::Config;
+use autogen_core::config::Config;
 use tracing::debug;
 
 pub type DynResult<T> = Result<T, Box<dyn std::error::Error>>;
@@ -10,10 +7,8 @@ pub type DynResult<T> = Result<T, Box<dyn std::error::Error>>;
 async fn main() -> DynResult<()> {
     setup_tracing();
 
-    let config: Config = toml::from_str(&std::fs::read_to_string("config.toml")?)?;
-
+    let config = Config::load("config.toml")?;
     debug!("\n{:#?}", config);
-    debug!("\n{}", toml::to_string(&config)?);
 
     Ok(())
 }
@@ -31,4 +26,20 @@ fn setup_tracing() {
         .init();
 }
 
-trait Agent {}
+struct AgentController {
+    agent_id: u16,
+    publisher: MessagePublisher,
+    // kind: AgentKind,
+}
+
+// impl AgentController {
+//     fn new(agent_id: u16, kind: AgentKind) -> Self {
+//         Self { agent_id, kind }
+//     }
+// }
+
+// enum AgentKind {
+//     Process,
+//     Consensus,
+//     Manager,
+// }

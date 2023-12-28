@@ -1,0 +1,17 @@
+[package]
+name = "sophon-core"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+description = "Backend agnostic AI and User agents"
+keywords.workspace = true
+license.workspace = true
+readme = "../README.md"
+exclude = ["Cargo.lock"]
+
+[dependencies]
+chatgpt_rs = "1.2.3"
+serde = { version = "1.0.193", features = ["derive"] }
+thiserror = "1.0.51"
+toml = "0.8.8"
+tracing = "0.1.40"

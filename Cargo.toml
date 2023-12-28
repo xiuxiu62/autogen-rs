@@ -1,14 +1,32 @@
-[package]
-name = "autogen-rs"
-version = "0.1.0"
+[workspace.package]
 edition = "2021"
+rust-version = "1.74.0"
+keywords = ["ai", "agent", "oracle"]
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/xiuxiu62/sophon"
+version = "0.1.0"
+authors = ["xiuxiu62 <jacremer@live.com>"]
 
 [workspace]
 members = [
-  "autogen-client",
-  "autogen-core",
+  "sophon-core",
+  "sophon-client",
+]
+default-members = [
+  "sophon-core",
+  "sophon-client",
 ]
 
-[[example]]
-name = "chess"
-path = "examples/chess.rs"
+[workspace.dependencies.sophon-client]
+package = "sophon-client"
+path = "./sophon-client"
+version = "0.1.0"
+
+[workspace.dependencies.sophon-core]
+package = "sophon-core"
+path = "./sophon-core"
+version = "0.1.0"
+
+# [[example]]
+# name = "chess"
+# path = "examples/chess.rs"
