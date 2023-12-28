@@ -1,22 +1,18 @@
-mod entity;
-pub mod message;
-
-use self::message::{Message, MessagePublisher, MessageSubscriber};
+use crate::{
+    message::{Message, MessagePublisher, MessageSubscriber},
+    Backend,
+};
 use std::{
     borrow::Cow,
-    sync::{Arc, RwLock},
+    sync::{Arc, RwLock, RwLockReadGuard, RwLockWriteGuard, TryLockResult},
 };
-
-pub trait Backend<'a>: Send + Sync {
-    fn query(&'a self, message: Message<'a>, publisher: Arc<MessagePublisher<'a>>);
-}
 
 pub struct Agent<'agent, B>
 where
     for<'backend> B: Backend<'backend>,
 {
     name: Cow<'agent, str>,
-    inner: Arc<AgentInner<B>>,
+    inner: Arc<AgentInternal<B>>,
     publisher: Arc<MessagePublisher<'agent>>,
     subscriber: MessageSubscriber<'agent>,
 }
@@ -25,12 +21,18 @@ impl<'agent, B> Agent<'agent, B>
 where
     for<'backend> B: Backend<'backend>,
 {
-    pub fn query(&self, message: Message<'agent>) {
-        self.inner
-            .0
-            .write()
+    pub async fn query(&'agent self, message: Message) {
+        self.try_write()
             .unwrap()
             .query(message, self.publisher.clone());
+    }
+
+    fn try_read(&self) -> TryLockResult<RwLockReadGuard<'_, B>> {
+        self.inner.try_read()
+    }
+
+    fn try_write(&self) -> TryLockResult<RwLockWriteGuard<'_, B>> {
+        self.inner.try_write()
     }
 }
 
@@ -38,12 +40,12 @@ impl<'agent, B> Agent<'agent, B>
 where
     for<'backend> B: Backend<'backend>,
 {
-    pub fn new(name: &str, inner: B) -> Self {
+    pub fn new(name: &'agent str, inner: B) -> Self {
         let (publisher, subscriber) = std::sync::mpsc::channel();
 
         Self {
             name: Cow::from(name),
-            inner: Arc::new(AgentInner::new(inner)),
+            inner: Arc::new(AgentInternal::new(inner)),
             publisher: Arc::new(publisher),
             subscriber,
         }
@@ -53,11 +55,24 @@ where
 unsafe impl<'agent, B> Send for Agent<'agent, B> where for<'backend> B: Backend<'backend> {}
 unsafe impl<'agent, B> Sync for Agent<'agent, B> where for<'backend> B: Backend<'backend> {}
 
-struct AgentInner<B>(RwLock<B>)
+struct AgentInternal<B>(RwLock<B>)
 where
     for<'backend> B: Backend<'backend>;
 
-impl<B> AgentInner<B>
+impl<B> AgentInternal<B>
+where
+    for<'backend> B: Backend<'backend>,
+{
+    pub fn try_read(&self) -> TryLockResult<RwLockReadGuard<'_, B>> {
+        self.0.try_read()
+    }
+
+    pub fn try_write(&self) -> TryLockResult<RwLockWriteGuard<'_, B>> {
+        self.0.try_write()
+    }
+}
+
+impl<B> AgentInternal<B>
 where
     for<'backend> B: Backend<'backend>,
 {
@@ -65,14 +80,3 @@ where
         Self(RwLock::new(backend))
     }
 }
-
-// struct ExampleBackend;
-
-// unsafe impl Send for ExampleBackend {}
-// unsafe impl Sync for ExampleBackend {}
-
-// impl<'a> Backend<'a> for ExampleBackend {
-//     fn query(&'a self, message: Message<'a>, publisher: Arc<MessagePublisher<'a>>) {
-//         todo!()
-//     }
-// }

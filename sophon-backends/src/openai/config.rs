@@ -1,15 +1,15 @@
-use super::error::{OpenaiError, OpenaiResult};
+use super::error::{Error, Result};
 use chatgpt::prelude::{ChatGPT, ChatGPTEngine, ModelConfigurationBuilder};
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug)]
-pub struct OpenaiConfig {
+pub struct Config {
     pub name: String,
     model: String,
     api_key: Option<String>,
 }
 
-impl OpenaiConfig {
+impl Config {
     pub fn new(name: &str, model: &str, api_key: Option<&str>) -> Self {
         Self {
             name: name.to_owned(),
@@ -18,7 +18,7 @@ impl OpenaiConfig {
         }
     }
 
-    pub fn as_client(&self) -> OpenaiResult<ChatGPT> {
+    pub fn as_client(&self) -> Result<ChatGPT> {
         let model_config = ModelConfigurationBuilder::default()
             .engine(OpenaiEngine::try_from(self.model.clone())?)
             .build()?;
@@ -34,9 +34,9 @@ impl OpenaiConfig {
 struct OpenaiEngine(ChatGPTEngine);
 
 impl TryFrom<String> for OpenaiEngine {
-    type Error = OpenaiError;
+    type Error = Error;
 
-    fn try_from(value: String) -> Result<Self, Self::Error> {
+    fn try_from(value: String) -> Result<Self> {
         let engine = match value.as_str() {
             "gpt-3.5-turbo" => Self(ChatGPTEngine::Gpt35Turbo),
             "gpt-3.5-turbo-0301" => Self(ChatGPTEngine::Gpt35Turbo_0301),
@@ -44,7 +44,7 @@ impl TryFrom<String> for OpenaiEngine {
             "gpt-4.0-32k" => Self(ChatGPTEngine::Gpt4_32k),
             "gpt-4.0-0314" => Self(ChatGPTEngine::Gpt4_0314),
             "gpt-4.0-32k-0314" => Self(ChatGPTEngine::Gpt4_32k_0314),
-            _ => return Err(OpenaiError::EngineSelection(value)),
+            _ => return Err(Error::EngineSelection(value)),
         };
 
         Ok(engine)

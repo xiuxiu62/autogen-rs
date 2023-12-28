@@ -1,6 +1,7 @@
 [workspace.package]
 edition = "2021"
-rust-version = "1.74.0"
+# rust-version = "1.74.0"
+rust-version = "1.75.0"
 keywords = ["ai", "agent", "oracle"]
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/xiuxiu62/sophon"
@@ -8,25 +9,39 @@ version = "0.1.0"
 authors = ["xiuxiu62 <jacremer@live.com>"]
 
 [workspace]
+resolver = "2"
 members = [
-  "sophon-core",
+  "sophon-backends",
   "sophon-client",
+  "sophon-core",
 ]
 default-members = [
-  "sophon-core",
+  "sophon-backends",
   "sophon-client",
+  "sophon-core",
 ]
 
-[workspace.dependencies.sophon-client]
+[workspace.dependencies.sophon_backends]
+package = "sophon-backends"
+path = "./sophon-backends"
+version = "0.1.0"
+
+[workspace.dependencies.sophon_client]
 package = "sophon-client"
 path = "./sophon-client"
 version = "0.1.0"
 
-[workspace.dependencies.sophon-core]
+[workspace.dependencies.sophon_core]
 package = "sophon-core"
 path = "./sophon-core"
 version = "0.1.0"
 
-# [[example]]
-# name = "chess"
-# path = "examples/chess.rs"
+[workspace.dependencies]
+chatgpt_rs = "1.2.3"
+serde = "1.0.193" 
+thiserror = "1.0.51"
+tokio = "1.35.1"
+toml = "0.8.8"
+tracing = "0.1.40"
+tracing-subscriber = "0.3.18"
+

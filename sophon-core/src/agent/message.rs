@@ -1,18 +1,31 @@
-use std::{borrow::Cow, sync::mpsc};
+use std::sync::mpsc;
+
+pub type MessagePublisher<'agent> = mpsc::Sender<Message>;
+pub type MessageSubscriber<'agent> = mpsc::Receiver<Message>;
 
 #[derive(Clone, Debug)]
-pub struct Message<'agent> {
+pub struct Message {
     id: u16,
-    kind: MessageKind,
-    contents: Cow<'agent, str>,
+    // kind: MessageKind,
+    contents: String,
 }
 
-#[derive(Copy, Clone, Debug)]
-pub enum MessageKind {
-    User,
-    Agent,
+impl Message {
+    pub fn new(
+        id: u16,
+        // kind: MessageKind,
+        contents: &str,
+    ) -> Self {
+        Self {
+            id,
+            // kind,
+            contents: contents.to_owned(),
+        }
+    }
 }
 
-pub type MessagePublisher<'agent> = mpsc::Sender<Message<'agent>>;
-
-pub type MessageSubscriber<'agent> = mpsc::Receiver<Message<'agent>>;
+// #[derive(Copy, Clone, Debug)]
+// pub enum MessageKind {
+//     User,
+//     Agent,
+// }

@@ -1,9 +1,9 @@
 use thiserror::Error;
 
-pub type OpenaiResult<T> = Result<T, OpenaiError>;
+pub type Result<T> = std::result::Result<T, Error>;
 
 #[derive(Error, Debug)]
-pub enum OpenaiError {
+pub enum Error {
     #[error("Failed to convert `{0}` into an OpenaiEngine")]
     EngineSelection(String),
     #[error(transparent)]

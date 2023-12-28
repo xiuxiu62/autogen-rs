@@ -1,14 +1,12 @@
-use autogen_core::config::Config;
+use sophon_client::config::Config;
 use tracing::debug;
 
-pub type DynResult<T> = Result<T, Box<dyn std::error::Error>>;
-
 #[tokio::main]
-async fn main() -> DynResult<()> {
+async fn main() -> error::Result<()> {
     setup_tracing();
 
-    let config = Config::load("config.toml")?;
-    debug!("\n{:#?}", config);
+    let config = Config::load("config.toml").await?;
+    debug!("{:#?}", config);
 
     Ok(())
 }
@@ -26,20 +24,21 @@ fn setup_tracing() {
         .init();
 }
 
-struct AgentController {
-    agent_id: u16,
-    publisher: MessagePublisher,
-    // kind: AgentKind,
+pub mod error {
+    use sophon_client::config;
+    use std::fmt;
+    use thiserror::Error;
+
+    pub type Result<T> = std::result::Result<T, Error>;
+
+    #[derive(Debug, Error)]
+    pub enum Error {
+        Config(#[from] config::Error),
+    }
+
+    impl fmt::Display for Error {
+        fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+            write!(f, "{self:?}")
+        }
+    }
 }
-
-// impl AgentController {
-//     fn new(agent_id: u16, kind: AgentKind) -> Self {
-//         Self { agent_id, kind }
-//     }
-// }
-
-// enum AgentKind {
-//     Process,
-//     Consensus,
-//     Manager,
-// }

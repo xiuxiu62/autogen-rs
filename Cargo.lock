@@ -788,11 +788,26 @@ dependencies = [
 ]
 
 [[package]]
+name = "sophon-backends"
+version = "0.1.0"
+dependencies = [
+ "chatgpt_rs",
+ "serde",
+ "sophon-core",
+ "thiserror",
+ "tracing",
+]
+
+[[package]]
 name = "sophon-client"
 version = "0.1.0"
 dependencies = [
+ "serde",
+ "sophon-backends",
  "sophon-core",
+ "thiserror",
  "tokio",
+ "toml",
  "tracing",
  "tracing-subscriber",
 ]
@@ -804,7 +819,6 @@ dependencies = [
  "chatgpt_rs",
  "serde",
  "thiserror",
- "toml",
  "tracing",
 ]
 

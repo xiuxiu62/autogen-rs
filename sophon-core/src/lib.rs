@@ -1,35 +1,13 @@
+use message::{Message, MessagePublisher};
+use std::sync::Arc;
+
 pub mod agent;
-pub mod config;
-pub mod openai;
+pub mod entity;
+pub mod message;
+// pub mod config;
 
 pub type DynResult<T> = Result<T, Box<dyn std::error::Error>>;
 
-// use crate::config::Config;
-// use tracing::debug;
-
-// pub type DynResult<T> = Result<T, Box<dyn std::error::Error>>;
-
-// #[tokio::main]
-// async fn main() -> DynResult<()> {
-//     setup_tracing();
-
-//     let config: Config = toml::from_str(&std::fs::read_to_string("config.toml")?)?;
-
-//     debug!("\n{:#?}", config);
-//     debug!("\n{}", toml::to_string(&config)?);
-
-//     Ok(())
-// }
-
-// fn setup_tracing() {
-//     let max_level = if cfg!(debug_assertions) {
-//         tracing::Level::DEBUG
-//     } else {
-//         tracing::Level::INFO
-//     };
-
-//     tracing_subscriber::fmt()
-//         .with_max_level(max_level)
-//         .with_target(false)
-//         .init();
-// }
+pub trait Backend<'a>: Send + Sync {
+    async fn query(&'a self, message: Message, publisher: Arc<MessagePublisher<'a>>);
+}
