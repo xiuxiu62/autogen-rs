@@ -32,7 +32,7 @@ agent environments in a later section.
     to reflect these improved node choices, making subsequent executions faster.
   - we can extend the agent-backend interface to allow a single agent to run parallel queries accros multiple backends.  This will be challenging
     in that we'll need functionallity to run multiple backends multiple times for each agent relationship.  We can use a linear interpolation over 
-    an averaged event-per-backend delta, pruning slower backends as we go, until all but one are pruned at a delta 1
+    an averaged event-per-backend delta, culling slower backends as we go, until all but one are culled at delta 1
   - This might slow the system down more than it helps in short lived agents, but will increase the average performance
     of transactions in large systems with long lifetimes.
      

@@ -9,5 +9,11 @@ pub mod message;
 pub type DynResult<T> = Result<T, Box<dyn std::error::Error>>;
 
 pub trait Backend<'a>: Send + Sync {
-    async fn query(&'a self, message: Message, publisher: Arc<MessagePublisher<'a>>);
+    type Error: std::error::Error;
+
+    async fn query(
+        &'a mut self,
+        message: Message,
+        publisher: Arc<MessagePublisher<'a>>,
+    ) -> Result<(), Self::Error>;
 }

@@ -14,4 +14,5 @@ chatgpt_rs.workspace = true
 serde = { workspace = true, features = ["derive"] } 
 sophon_core.workspace = true
 thiserror.workspace = true
+tokio = { workspace = true, features = ["full"] }
 tracing.workspace = true

@@ -1,6 +1,7 @@
 use chatgpt::prelude::ChatGPT;
 use sophon_core::message::{Message, MessagePublisher};
 use std::sync::Arc;
+use tokio::io;
 
 mod config;
 mod error;
@@ -26,7 +27,16 @@ impl TryFrom<Config> for Backend {
 }
 
 impl<'backend> sophon_core::Backend<'backend> for Backend {
-    async fn query(&'backend self, message: Message, publisher: Arc<MessagePublisher<'backend>>) {
+    type Error = io::Error;
+
+    async fn query(
+        &'backend mut self,
+        message: Message,
+        publisher: Arc<MessagePublisher<'backend>>,
+    ) -> io::Result<()> {
         todo!()
     }
+    // async fn query(&'backend self, message: Message, publisher: Arc<MessagePublisher<'backend>>) {
+    //     todo!()
+    // }
 }

@@ -13,4 +13,5 @@ exclude = ["Cargo.lock"]
 chatgpt_rs.workspace = true 
 serde = { workspace = true, features = ["derive"] }
 thiserror.workspace = true 
+tokio.workspace = true
 tracing.workspace = true 

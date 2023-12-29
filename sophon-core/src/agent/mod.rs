@@ -6,6 +6,7 @@ use std::{
     borrow::Cow,
     sync::{Arc, RwLock, RwLockReadGuard, RwLockWriteGuard, TryLockResult},
 };
+use tokio::sync::mpsc;
 
 pub struct Agent<'agent, B>
 where
@@ -41,7 +42,7 @@ where
     for<'backend> B: Backend<'backend>,
 {
     pub fn new(name: &'agent str, inner: B) -> Self {
-        let (publisher, subscriber) = std::sync::mpsc::channel();
+        let (publisher, subscriber) = mpsc::unbounded_channel();
 
         Self {
             name: Cow::from(name),

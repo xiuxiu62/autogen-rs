@@ -795,6 +795,7 @@ dependencies = [
  "serde",
  "sophon-core",
  "thiserror",
+ "tokio",
  "tracing",
 ]
 
@@ -819,6 +820,7 @@ dependencies = [
  "chatgpt_rs",
  "serde",
  "thiserror",
+ "tokio",
  "tracing",
 ]
 

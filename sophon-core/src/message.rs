@@ -1,20 +1,23 @@
-use crate::entity::EntityId;
-use std::sync::mpsc;
+use std::fmt;
+use tokio::sync::mpsc;
 
-pub type MessagePublisher<'agent> = mpsc::Sender<Message>;
-pub type MessageSubscriber<'agent> = mpsc::Receiver<Message>;
+pub type MessagePublisher<'agent> = mpsc::UnboundedSender<Message>;
+pub type MessageSubscriber<'agent> = mpsc::UnboundedReceiver<Message>;
 
 #[derive(Clone, Debug)]
 pub struct Message {
-    pub sender: EntityId,
+    pub sender: String,
     pub contents: String,
 }
 
 impl Message {
-    pub fn new(sender: EntityId, contents: &str) -> Self {
-        Self {
-            sender,
-            contents: contents.to_owned(),
-        }
+    pub fn new(sender: String, contents: String) -> Self {
+        Self { sender, contents }
+    }
+}
+
+impl fmt::Display for Message {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}:\n{}", self.sender, self.contents)
     }
 }
